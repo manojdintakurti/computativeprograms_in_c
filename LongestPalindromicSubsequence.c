@@ -1,56 +1,99 @@
 #include<stdio.h>
 #include<string.h>
-int max(int a,int b){
-    return a>b?a:b;
+int dp[100][100];
+void print(int i,int j,char str1[],char str2[],int pos,int len){
+    static int count=0;
+    if((j<0||i>len-1)){
+
+    }
+    else if(dp[i][j]<=-1){
+        
+    }
+    else if(dp[i][j]!=0){
+        if(str1[i]==str1[j]){
+            str2[pos]=str1[i];
+            print(i+1,j-1,str1,str2,pos+1,len);
+            dp[i][j]=dp[i][j]*-1;
+        }
+        else{
+            if(dp[i][j-1]<=-1){
+                if(dp[i+1][j]>=(dp[i][j-1]*-1))
+                print(i+1,j,str1,str2,pos,len);
+            }
+            else if(dp[i][j-1]>dp[i+1][j]){
+                print(i,j-1,str1,str2,pos,len);
+                dp[i][j]=dp[i][j]*-1;    
+            }
+            else if(dp[i+1][j]>dp[i][j-1]){
+                print(i+1,j,str1,str2,pos,len);
+                dp[i][j]=dp[i][j]*-1;
+            }
+            else{
+                print(i,j-1,str1,str2,pos,len);
+                dp[i][j]=-1;
+                print(i+1,j,str1,str2,pos,len);
+                dp[i][j]=dp[i][j]*-1;
+            }
+        }
+    }
+    else{
+        count++;
+        str2[pos]='\0';
+        printf("%s %d\n",str2,count);
+    }
 }
 int main()
 {
-    char str[1000];
-    scanf("%s",str);
-    int n=strlen(str);
-    int dp[n][n];
-    for(int i=0;i<n;i++){
-        for(int j=0;j<n;j++){
-            if(i==j){
-                dp[i][j]=1;
-            }
-            else{
-                dp[i][j]=0;
-            }
+    char str1[1000],str2[1000];
+    scanf("%s",str1);
+    int len = strlen(str1);
+    for(int i=0;i<len;i++){
+        for(int j=0;j<len;j++){
+            if(i==j)dp[i][j]=1;
+            else dp[i][j]=0;
         }
     }
-    int i=0,j=1,k=1;
+    int i,j,k=1;
     while(1){
         i=0;
         j=k;
-        if(i==0 && j==n){
+        if(i==0 && j==len){
             break;
         }
-        while(j<n){
-            if(str[i]==str[j]){
+        while(j<len){
+            if(str1[i]==str1[j]){
                 dp[i][j]=dp[i+1][j-1]+2;
             }
             else{
-                dp[i][j]=max(dp[i][j-1],dp[i+1][j]);
+                dp[i][j]=dp[i][j-1]>=dp[i+1][j]?dp[i][j-1]:dp[i+1][j];
             }
             i++;
             j++;
+
         }
         k++;
     }
-    for(int i=0;i<n;i++){
-        for(int j=0;j<n;j++){
+   /* for(int i=0;i<len;i++){
+        for(int j=0;j<len;j++){
             printf("%d ",dp[i][j]);
         }
         printf("\n");
     }
-    char ans[1000];
-    k=0;
+    */
     i=0;
-    j=n-1;
+    j=len-1;
+    print(i,j,str1,str2,0,len);
+    for(int i=0;i<len;i++){
+        for(int j=0;j<len;j++){
+            printf("%d ",dp[i][j]);
+        }
+        printf("\n");
+    }
+    /*
+    k=0;
     while(dp[i][j]!=0){
-        if(str[i]==str[j]){
-            ans[k]=str[i];
+        if(str1[i]==str1[j]){
+            str2[k]=str1[i];
             k++;
             i++;
             j--;
@@ -64,23 +107,19 @@ int main()
             }
         }
     }
-    if(dp[0][n-1]%2!=0){
-        int t=k-2;
-        while(t>=0){
-            ans[k]=ans[t];
-            k++;
-            t--;
-        }
-        ans[k]='\0';
+    int t;
+    if(dp[0][len-1]%2==0){
+        t=k-1;
     }
     else{
-        int t=k-1;
-        while(t>=0){
-            ans[k]=ans[t];
-            k++;
-            t--;
-        }
-        ans[k]='\0';
+        t=k-2;
     }
-    printf("%s",ans);
+        while(t>=0){
+            str2[k]=str2[t];
+            t--;
+            k++;
+        }
+        str2[k]='\0';
+        printf("%s",str2);
+    */
 }
